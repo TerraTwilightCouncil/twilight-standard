@@ -1,5 +1,7 @@
 [package]
 name = "asset-plus"
+description = "Improved asset package with backward compatible from TerraSwap's Asset and Astroport's Asset"
+license = "Apache-2.0"
 version = "0.1.0"
 authors = ["TwilightCouncil"]
 edition = "2021"
