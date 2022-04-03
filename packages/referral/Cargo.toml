@@ -5,7 +5,7 @@ license = "Apache-2.0"
 version = "0.1.0"
 authors = ["TwilightCouncil"]
 edition = "2021"
-repositary = "https://github.com/TerraTwilightCouncil/twilight-standard"
+repository = "https://github.com/TerraTwilightCouncil/twilight-standard"
 
 [features]
 backtraces = ["cosmwasm-std/backtraces"]
