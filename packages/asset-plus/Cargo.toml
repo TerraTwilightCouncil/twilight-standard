@@ -1,10 +1,11 @@
 [package]
-name = "asset-plus"
+name = "tw-asset-plus"
 description = "Improved asset package with backward compatible from TerraSwap's Asset and Astroport's Asset"
 license = "Apache-2.0"
 version = "0.1.0"
 authors = ["TwilightCouncil"]
 edition = "2021"
+repositary = "https://github.com/TerraTwilightCouncil/twilight-standard"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
