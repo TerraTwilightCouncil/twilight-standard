@@ -2,7 +2,7 @@
 name = "tw-referral"
 description = "A standard referral controller that can query referral of specfic address and referral chains"
 license = "Apache-2.0"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["TwilightCouncil"]
 edition = "2021"
 repository = "https://github.com/TerraTwilightCouncil/twilight-standard"
