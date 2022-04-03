@@ -530,7 +530,7 @@ dependencies = [
 
 [[package]]
 name = "tw-asset-plus"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -542,7 +542,7 @@ dependencies = [
 
 [[package]]
 name = "tw-referral"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
