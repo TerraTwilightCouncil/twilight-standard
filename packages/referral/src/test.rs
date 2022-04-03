@@ -2,7 +2,7 @@
 mod tests {
     use cosmwasm_std::{testing::mock_dependencies, Addr};
 
-    use crate::{indexed_referral::IndexedReferral, single_sided_referral::SingleSidedReferral};
+    use crate::{IndexedReferral, SingleSidedReferral};
 
     #[test]
     fn test_single_sided_referral() {

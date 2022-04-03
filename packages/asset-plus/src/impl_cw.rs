@@ -1,6 +1,6 @@
 use cw_storage_plus::PrimaryKey;
 
-use crate::AssetInfo;
+use crate::asset::AssetInfo;
 
 impl PrimaryKey<'_> for AssetInfo {
     type Prefix = ();
