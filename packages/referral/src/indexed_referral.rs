@@ -142,8 +142,8 @@ impl<'a> IndexedReferral<'a> {
             .idx
             .referred
             .prefix(addr)
-            .range(storage, bound.0, bound.1, bound.2)
-            .map(|e| e.unwrap().1.referred)
+            .keys(storage, bound.0, bound.1, bound.2)
+            .map(|e| Addr::unchecked(String::from_utf8(e).unwrap()))
             .take(limit.unwrap_or(DEFAULT_REFERRED_LIMIT) as usize)
             .collect::<Vec<_>>())
     }
