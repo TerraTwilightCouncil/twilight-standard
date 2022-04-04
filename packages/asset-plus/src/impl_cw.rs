@@ -1,5 +1,6 @@
 use cosmwasm_std::{
-    to_binary, Api, BankMsg, Coin, CosmosMsg, QuerierWrapper, StdError, StdResult, Uint128, WasmMsg,
+    from_slice, to_binary, to_vec, Api, BankMsg, Coin, CosmosMsg, QuerierWrapper, StdError,
+    StdResult, Uint128, WasmMsg,
 };
 use cw20::{BalanceResponse, Cw20ExecuteMsg, Cw20QueryMsg};
 use cw_storage_plus::PrimaryKey;
@@ -32,6 +33,10 @@ impl Asset {
             info,
             amount: amount.into(),
         }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.amount.is_zero()
     }
 
     pub fn transfer_all_msg<T: Into<String>>(&self, to_address: T) -> StdResult<CosmosMsg> {
@@ -78,6 +83,14 @@ impl AssetInfo {
             },
             Err(_) => AssetInfo::NativeToken { denom: s },
         })
+    }
+
+    pub fn to_serde_vec(&self) -> StdResult<Vec<u8>> {
+        to_vec(self)
+    }
+
+    pub fn from_serde_slice(b: &[u8]) -> StdResult<Self> {
+        from_slice(b)
     }
 
     pub fn transfer_msg<T: Into<String>, A: Into<Uint128>>(
