@@ -4,7 +4,7 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign},
 };
 
-use cosmwasm_std::{Api, StdError, StdResult, Uint128};
+use cosmwasm_std::Uint128;
 
 use crate::asset::{Asset, AssetInfo};
 
@@ -34,35 +34,6 @@ impl Sum for Asset {
             amount: next.amount + asset.amount,
             ..next
         })
-    }
-}
-
-impl AssetInfo {
-    pub fn as_bytes(&self) -> &[u8] {
-        match &self {
-            AssetInfo::Token { contract_addr } => contract_addr.as_bytes(),
-            AssetInfo::NativeToken { denom } => denom.as_bytes(),
-        }
-    }
-
-    pub fn from_bytes(b: &[u8], api: &dyn Api) -> StdResult<Self> {
-        let s = String::from_utf8(b.to_vec())
-            .map_err(|_| StdError::invalid_utf8("String parsing error"))?;
-        Ok(match api.addr_validate(&s) {
-            Ok(addr) => AssetInfo::Token {
-                contract_addr: addr,
-            },
-            Err(_) => AssetInfo::NativeToken { denom: s },
-        })
-    }
-}
-
-impl Asset {
-    pub fn new<A: Into<Uint128>>(info: AssetInfo, amount: A) -> Self {
-        Asset {
-            info,
-            amount: amount.into(),
-        }
     }
 }
 
