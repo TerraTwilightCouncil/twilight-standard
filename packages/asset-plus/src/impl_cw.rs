@@ -44,22 +44,19 @@ impl Asset {
     }
 
     pub fn assert_sent_token(&self, coins: &[Coin]) -> StdResult<()> {
-        match &self.info {
-            AssetInfo::NativeToken { denom } => {
-                match coins.iter().find(|c| &c.denom == denom) {
-                    Some(c) => (c.amount == self.amount)
-                        .then(|| ())
-                        .ok_or(StdError::generic_err(format!(
-                            "Expected amount {} but found {} for denom {}",
-                            self.amount, c.amount, denom
-                        ))),
-                    None => Err(StdError::generic_err(format!(
-                        "Denom {} not found in sent coins",
-                        denom
-                    ))),
-                }?;
-            }
-            _ => {}
+        if let AssetInfo::NativeToken { denom } = &self.info {
+            match coins.iter().find(|c| &c.denom == denom) {
+                Some(c) => (c.amount == self.amount).then(|| ()).ok_or_else(|| {
+                    StdError::generic_err(format!(
+                        "Expected amount {} but found {} for denom {}",
+                        self.amount, c.amount, denom
+                    ))
+                }),
+                None => Err(StdError::generic_err(format!(
+                    "Denom {} not found in sent coins",
+                    denom
+                ))),
+            }?;
         }
 
         Ok(())
