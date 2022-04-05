@@ -1,0 +1,28 @@
+[package]
+name = "tw-asset-plus"
+description = "Improved asset package with backward compatible from TerraSwap's Asset and Astroport's Asset"
+license = "Apache-2.0"
+version = "0.1.1"
+authors = ["TwilightCouncil"]
+edition = "2021"
+repository = "https://github.com/TerraTwilightCouncil/twilight-standard"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+# for more explicit tests, cargo test --features=backtraces
+backtraces = ["cosmwasm-std/backtraces"]
+# use library feature to disable all instantiate/execute/query exports
+library = []
+
+[dependencies]
+cosmwasm-std = { version = "0.16.5" }
+cosmwasm-storage = { version = "0.16.5" }
+cw-storage-plus = "0.9.1"
+cw20 = "0.9.1"
+schemars = "0.8.8"
+serde = { version = "1.0.136", default-features = false, features = ["derive"] }
+
+[dev-dependencies]
+cosmwasm-schema = { version = "0.16.5" }
