@@ -16,7 +16,12 @@ impl Display for Asset {
 
 impl Display for AssetInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self)
+        match self {
+            AssetInfo::Token { contract_addr } => {
+                write!(f, "Token at {}", contract_addr)
+            }
+            AssetInfo::NativeToken { denom } => write!(f, "Native token with denom {}", denom),
+        }
     }
 }
 
