@@ -64,6 +64,12 @@ impl Asset {
 }
 
 impl AssetInfo {
+    pub fn assert_eq(&self, other: &Self) -> StdResult<()> {
+        (self == other)
+            .then(|| ())
+            .ok_or_else(|| StdError::generic_err("Asset info mismatch"))
+    }
+
     pub fn as_bytes(&self) -> &[u8] {
         match &self {
             AssetInfo::Token { contract_addr } => contract_addr.as_bytes(),
