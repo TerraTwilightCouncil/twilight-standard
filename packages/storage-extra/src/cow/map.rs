@@ -43,16 +43,6 @@ where
         Map::new(&self.namespace)
     }
 
-    #[cfg(feature = "iterator")]
-    pub fn prefix(&self, p: K::Prefix) -> Prefix<T> {
-        self.map().prefix(p)
-    }
-
-    #[cfg(feature = "iterator")]
-    pub fn sub_prefix(&self, p: K::SubPrefix) -> Prefix<T> {
-        self.map().prefix(p)
-    }
-
     pub fn save(&'key self, store: &mut dyn Storage, k: K, data: &T) -> StdResult<()> {
         self.map().save(store, k, data)
     }
