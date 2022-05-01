@@ -1,5 +1,5 @@
 use cosmwasm_std::{StdError, StdResult, Storage};
-use cw_storage_plus::{Map, PrimaryKey};
+use cw_storage_plus::{Map, Prefix, PrimaryKey};
 use serde::{de::DeserializeOwned, Serialize};
 use std::{borrow::Cow, marker::PhantomData};
 
@@ -41,6 +41,14 @@ where
 {
     pub fn map(&self) -> Map<K, T> {
         Map::new(&self.namespace)
+    }
+
+    pub fn prefix(&'key self, p: K::Prefix) -> Prefix<T> {
+        self.map().prefix(p)
+    }
+
+    pub fn sub_prefix(&'key self, p: K::SubPrefix) -> Prefix<T> {
+        self.map().sub_prefix(p)
     }
 
     pub fn save(&'key self, store: &mut dyn Storage, k: K, data: &T) -> StdResult<()> {
