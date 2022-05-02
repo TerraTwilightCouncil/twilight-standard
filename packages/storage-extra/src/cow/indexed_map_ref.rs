@@ -1,3 +1,8 @@
+/// Another varaint of cw-storage-plus IndexedMap. Using reference of indexes instead of owned to
+/// avoid cloning/rebuilding as accessor and remove trait bound of new constructor to make it constant.
+///
+/// Modified from:
+/// https://github.com/CosmWasm/cw-plus/blob/v0.9.1/packages/storage-plus/src/indexed_map.rs
 use cosmwasm_std::{StdError, StdResult, Storage};
 use cw_storage_plus::{IndexList, Map, Path, Prefix, Prefixer, PrimaryKey};
 use serde::{de::DeserializeOwned, Serialize};
