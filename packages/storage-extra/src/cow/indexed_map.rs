@@ -1,10 +1,9 @@
+use cosmwasm_std::{Pair, StdError, StdResult, Storage};
+use cw_storage_plus::{Index, IndexList, MultiIndex, Path, Prefix, PrimaryKey, UniqueIndex};
+use serde::{de::DeserializeOwned, Serialize};
 use std::{borrow::Cow, marker::PhantomData};
 
-use cosmwasm_std::{Pair, StdError, StdResult, Storage};
-use cw_storage_plus::{
-    Index, IndexList, IndexedMap, MultiIndex, Path, Prefix, PrimaryKey, UniqueIndex,
-};
-use serde::{de::DeserializeOwned, Serialize};
+use super::indexed_map_ref::IndexedMapRef;
 
 #[derive(Debug, Clone)]
 pub struct IndexedMapCow<'a, K, T, I> {
@@ -38,10 +37,10 @@ impl<'a, K, T, I> IndexedMapCow<'a, K, T, I>
 where
     K: PrimaryKey<'a>,
     T: Serialize + DeserializeOwned + Clone,
-    I: IndexList<T> + Clone,
+    I: IndexList<T>,
 {
-    pub fn indexed_map(&'a self) -> IndexedMap<'a, K, T, I> {
-        IndexedMap::new(&self.pk_namespace, self.index.clone())
+    pub fn indexed_map(&'a self) -> IndexedMapRef<'a, K, T, I> {
+        IndexedMapRef::new(&self.pk_namespace, &self.index)
     }
 
     pub fn key(&'a self, k: K) -> Path<T> {
