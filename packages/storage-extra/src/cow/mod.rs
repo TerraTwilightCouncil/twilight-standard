@@ -1,4 +1,5 @@
 mod indexed_map;
+mod indexed_map_ref;
 mod item;
 mod map;
 
@@ -6,6 +7,7 @@ mod map;
 mod tests;
 
 pub use indexed_map::{IndexedMapCow, MultiIndexCow, UniqueIndexCow};
+pub use indexed_map_ref::IndexedMapRef;
 pub use item::ItemCow;
 pub use map::MapCow;
 
