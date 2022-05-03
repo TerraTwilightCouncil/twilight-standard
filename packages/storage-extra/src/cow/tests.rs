@@ -1,5 +1,5 @@
 use cosmwasm_std::{testing::MockStorage, Addr, Order};
-use cw_storage_plus::{Index, IndexList, U64Key};
+use cw_storage_plus::{Bound, Index, IndexList, U64Key};
 use serde::{Deserialize, Serialize};
 
 use super::*;
@@ -66,6 +66,28 @@ fn correct_namespace() {
     assert_eq!(
         it.indexed_map.index.address.idx_namespace,
         "primary-idm-addr"
+    );
+}
+
+#[test]
+fn ensure_uninit() {
+    let storage = MockStorage::new();
+    let it = ItemMapAccessor::new("primary");
+
+    assert_eq!(it.item.may_load(&storage).unwrap(), None);
+    assert_eq!(
+        it.map
+            .prefix(())
+            .range(&storage, None, None, Order::Ascending)
+            .collect::<Vec<_>>(),
+        vec![]
+    );
+    assert_eq!(
+        it.indexed_map
+            .prefix(())
+            .range(&storage, None, None, Order::Ascending)
+            .collect::<Vec<_>>(),
+        vec![]
     );
 }
 
@@ -208,6 +230,38 @@ fn indexed_map_works() {
             .map(|e| e.unwrap().1)
             .collect::<Vec<_>>(),
         vec![first.clone(), second.clone()]
+    );
+
+    assert_eq!(
+        it.indexed_map
+            .index
+            .count
+            .prefix(5.into())
+            .range(
+                &storage,
+                Some(Bound::exclusive_int(0u64)),
+                None,
+                Order::Ascending
+            )
+            .map(|e| e.unwrap().1)
+            .collect::<Vec<_>>(),
+        vec![second.clone()]
+    );
+
+    assert_eq!(
+        it.indexed_map
+            .index
+            .count
+            .prefix(5.into())
+            .range(
+                &storage,
+                None,
+                Some(Bound::exclusive_int(1u64)),
+                Order::Ascending,
+            )
+            .map(|e| e.unwrap().1)
+            .collect::<Vec<_>>(),
+        vec![first.clone()]
     );
 
     assert_eq!(
