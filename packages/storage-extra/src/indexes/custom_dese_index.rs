@@ -1,6 +1,7 @@
 use cosmwasm_std::{from_slice, Pair, StdError, StdResult, Storage};
 use cw_storage_plus::{Index, Map, Prefix, Prefixer, PrimaryKey};
 use serde::{de::DeserializeOwned, Serialize};
+use std::borrow::Cow;
 
 use super::helpers::namespaces_with_key;
 
@@ -10,13 +11,12 @@ type DeserializeFn<T> = fn(&dyn Storage, &[u8], Pair) -> StdResult<Pair<T>>;
 pub struct CustomDeseMultiIndex<'a, K, T> {
     idx_fn: fn(&T, Vec<u8>) -> K,
     dese_fn: Option<DeserializeFn<T>>,
-    idx_namespace: &'a [u8],
-    idx_map: Map<'a, K, u32>,
-    pk_namespace: &'a [u8],
+    idx_namespace: Cow<'a, str>,
+    pk_namespace: Cow<'a, str>,
 }
 
 impl<'a, K, T> CustomDeseMultiIndex<'a, K, T> {
-    pub const fn new(
+    pub const fn new_ref(
         idx_fn: fn(&T, Vec<u8>) -> K,
         dese_fn: Option<DeserializeFn<T>>,
         pk_namespace: &'a str,
@@ -25,9 +25,22 @@ impl<'a, K, T> CustomDeseMultiIndex<'a, K, T> {
         Self {
             idx_fn,
             dese_fn,
-            idx_namespace: idx_namespace.as_bytes(),
-            idx_map: Map::new(idx_namespace),
-            pk_namespace: pk_namespace.as_bytes(),
+            idx_namespace: Cow::Borrowed(idx_namespace),
+            pk_namespace: Cow::Borrowed(pk_namespace),
+        }
+    }
+
+    pub const fn new_owned(
+        idx_fn: fn(&T, Vec<u8>) -> K,
+        dese_fn: Option<DeserializeFn<T>>,
+        pk_namespace: String,
+        idx_namespace: String,
+    ) -> Self {
+        Self {
+            idx_fn,
+            dese_fn,
+            idx_namespace: Cow::Owned(idx_namespace),
+            pk_namespace: Cow::Owned(pk_namespace),
         }
     }
 }
@@ -84,16 +97,16 @@ pub fn deserialize_multi_kv_custom_pk<T: DeserializeOwned>(
 impl<'a, K, T> Index<T> for CustomDeseMultiIndex<'a, K, T>
 where
     T: Serialize + DeserializeOwned + Clone,
-    K: PrimaryKey<'a>,
+    K: for<'key> PrimaryKey<'key>,
 {
     fn save(&self, store: &mut dyn Storage, pk: &[u8], data: &T) -> StdResult<()> {
         let idx = (self.idx_fn)(data, pk.to_vec());
-        self.idx_map.save(store, idx, &(pk.len() as u32))
+        self.idx_map().save(store, idx, &(pk.len() as u32))
     }
 
     fn remove(&self, store: &mut dyn Storage, pk: &[u8], old_data: &T) -> StdResult<()> {
         let idx = (self.idx_fn)(old_data, pk.to_vec());
-        self.idx_map.remove(store, idx);
+        self.idx_map().remove(store, idx);
         Ok(())
     }
 }
@@ -103,11 +116,15 @@ where
     T: Serialize + DeserializeOwned + Clone,
     K: PrimaryKey<'a>,
 {
+    fn idx_map(&self) -> Map<'_, K, u32> {
+        Map::new(&self.idx_namespace)
+    }
+
     pub fn prefix(&self, p: K::Prefix) -> Prefix<T> {
         Prefix::with_deserialization_function(
-            self.idx_namespace,
+            self.idx_namespace.as_bytes(),
             &p.prefix(),
-            self.pk_namespace,
+            self.pk_namespace.as_bytes(),
             match self.dese_fn {
                 Some(f) => f,
                 None => deserialize_multi_kv,
@@ -117,9 +134,9 @@ where
 
     pub fn sub_prefix(&self, p: K::SubPrefix) -> Prefix<T> {
         Prefix::with_deserialization_function(
-            self.idx_namespace,
+            self.idx_namespace.as_bytes(),
             &p.prefix(),
-            self.pk_namespace,
+            self.pk_namespace.as_bytes(),
             match self.dese_fn {
                 Some(f) => f,
                 None => deserialize_multi_kv,
@@ -162,7 +179,7 @@ mod custom_dese_test {
         IndexedMap::new(
             "test",
             TestIndexes {
-                val: CustomDeseMultiIndex::new(
+                val: CustomDeseMultiIndex::new_ref(
                     |t, _| {
                         (
                             t.val.u128().into(),
