@@ -1,5 +1,5 @@
 [package]
-name = "storage-extra"
+name = "tw-storage-extra"
 version = "0.1.0"
 authors = ["TwilightCouncil"]
 edition = "2021"

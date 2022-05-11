@@ -7,9 +7,6 @@ authors = ["TwilightCouncil"]
 edition = "2021"
 repository = "https://github.com/TerraTwilightCouncil/twilight-standard"
 
-[lib]
-crate-type = ["cdylib", "rlib"]
-
 [features]
 # for more explicit tests, cargo test --features=backtraces
 backtraces = ["cosmwasm-std/backtraces"]
