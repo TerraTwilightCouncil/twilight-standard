@@ -1,0 +1,23 @@
+[package]
+name = "tw-storage-macros"
+version = "0.1.1"
+authors = ["TwilightCouncil"]
+edition = "2021"
+
+[lib]
+proc-macro = true 
+
+[features]
+# for more explicit tests, cargo test --features=backtraces
+backtraces = ["cosmwasm-std/backtraces"]
+# use library feature to disable all instantiate/execute/query exports
+library = []
+
+[dependencies]
+syn = "1.0.93"
+
+[dev-dependencies]
+cosmwasm-std = { version = "0.16.7" }
+cosmwasm-storage = { version = "0.16.7" }
+cw-storage-plus = "0.9.1"
+serde = { version = "1.0.136", default-features = false, features = ["derive"] }
