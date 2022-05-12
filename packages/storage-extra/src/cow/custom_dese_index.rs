@@ -9,10 +9,10 @@ type DeserializeFn<T> = fn(&dyn Storage, &[u8], Pair) -> StdResult<Pair<T>>;
 
 #[derive(Clone)]
 pub struct CustomDeseMultiIndex<'a, K, T> {
+    pub(crate) idx_namespace: Cow<'a, str>,
+    pub(crate) pk_namespace: Cow<'a, str>,
     idx_fn: fn(&T, Vec<u8>) -> K,
     dese_fn: Option<DeserializeFn<T>>,
-    idx_namespace: Cow<'a, str>,
-    pk_namespace: Cow<'a, str>,
 }
 
 impl<'a, K, T> CustomDeseMultiIndex<'a, K, T> {
@@ -114,13 +114,13 @@ where
 impl<'a, K, T> CustomDeseMultiIndex<'a, K, T>
 where
     T: Serialize + DeserializeOwned + Clone,
-    K: PrimaryKey<'a>,
+    K: for<'key> PrimaryKey<'key>,
 {
     fn idx_map(&self) -> Map<'_, K, u32> {
         Map::new(&self.idx_namespace)
     }
 
-    pub fn prefix(&self, p: K::Prefix) -> Prefix<T> {
+    pub fn prefix(&self, p: <K as PrimaryKey<'_>>::Prefix) -> Prefix<T> {
         Prefix::with_deserialization_function(
             self.idx_namespace.as_bytes(),
             &p.prefix(),
@@ -132,7 +132,7 @@ where
         )
     }
 
-    pub fn sub_prefix(&self, p: K::SubPrefix) -> Prefix<T> {
+    pub fn sub_prefix(&self, p: <K as PrimaryKey<'_>>::SubPrefix) -> Prefix<T> {
         Prefix::with_deserialization_function(
             self.idx_namespace.as_bytes(),
             &p.prefix(),
@@ -150,7 +150,7 @@ where
 }
 
 #[cfg(test)]
-mod custom_dese_test {
+mod test {
     use cosmwasm_std::{testing::MockStorage, Order, Uint128};
     use cw_storage_plus::{Index, IndexList, IndexedMap, MultiIndex, PrimaryKey, U128Key, U64Key};
     use serde::{Deserialize, Serialize};
@@ -201,6 +201,14 @@ mod custom_dese_test {
                 val_n: MultiIndex::new(|t, k| (t.val.u128().into(), k), "test", "test__val_n"),
             },
         )
+    }
+
+    #[test]
+    fn correct_namespace() {
+        let idm = idm();
+
+        assert_eq!(idm.idx.val.pk_namespace, "test");
+        assert_eq!(idm.idx.val.idx_namespace, "test__val");
     }
 
     #[test]
@@ -283,6 +291,8 @@ mod custom_dese_test {
             .map(|e| e.unwrap().1.id)
             .collect::<Vec<_>>();
 
+        // custom
+        // val: Descending, id: Ascending
         assert_eq!(v, vec![2, 0, 1, 3]);
 
         let vn = idm()
@@ -293,6 +303,8 @@ mod custom_dese_test {
             .map(|e| e.unwrap().1.id)
             .collect::<Vec<_>>();
 
+        // normal
+        // val: Descending, id: Descending
         assert_eq!(vn, vec![2, 3, 1, 0]);
     }
 }

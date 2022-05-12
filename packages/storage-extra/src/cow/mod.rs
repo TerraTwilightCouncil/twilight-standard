@@ -1,3 +1,5 @@
+mod custom_dese_index;
+mod helpers;
 mod indexed_map;
 mod indexed_map_ref;
 mod item;
@@ -6,6 +8,7 @@ mod map;
 #[cfg(test)]
 mod tests;
 
+pub use custom_dese_index::{deserialize_multi_kv_custom_pk, CustomDeseMultiIndex};
 pub use indexed_map::{IndexedMapCow, MultiIndexCow, UniqueIndexCow};
 pub use indexed_map_ref::IndexedMapRef;
 pub use item::ItemCow;
