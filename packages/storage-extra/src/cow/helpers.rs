@@ -1,3 +1,32 @@
+use cosmwasm_std::{from_slice, Pair, StdError, StdResult, Storage};
+use serde::de::DeserializeOwned;
+
+pub(crate) type DeserializeFn<T> = fn(&dyn Storage, &[u8], Pair) -> StdResult<Pair<T>>;
+
+pub(crate) fn deserialize_multi_kv<T: DeserializeOwned>(
+    store: &dyn Storage,
+    pk_namespace: &[u8],
+    kv: Pair,
+) -> StdResult<Pair<T>> {
+    let (key, pk_len) = kv;
+
+    // Deserialize pk_len
+    let pk_len = from_slice::<u32>(pk_len.as_slice())?;
+
+    // Recover pk from last part of k
+    let offset = key.len() - pk_len as usize;
+    let pk = &key[offset..];
+
+    let full_key = namespaces_with_key(&[pk_namespace], pk);
+
+    let v = store
+        .get(&full_key)
+        .ok_or_else(|| StdError::generic_err("pk not found"))?;
+    let v = from_slice::<T>(&v)?;
+
+    Ok((pk.into(), v))
+}
+
 pub(crate) fn encode_length(namespace: &[u8]) -> [u8; 2] {
     if namespace.len() > 0xFFFF {
         panic!("only supports namespaces up to length 0xFFFF")
