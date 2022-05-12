@@ -1,9 +1,9 @@
-use cosmwasm_std::{from_slice, Pair, StdError, StdResult, Storage};
+use cosmwasm_std::{StdResult, Storage};
 use cw_storage_plus::{Index, Map, Prefix, Prefixer, PrimaryKey};
 use serde::{de::DeserializeOwned, Serialize};
 use std::borrow::Cow;
 
-use super::helpers::{deserialize_multi_kv, namespaces_with_key, DeserializeFn};
+use super::helpers::{deserialize_multi_kv, DeserializeFn};
 
 #[derive(Clone)]
 pub struct CustomDeseMultiIndex<'a, K, T> {
@@ -41,31 +41,6 @@ impl<'a, K, T> CustomDeseMultiIndex<'a, K, T> {
             pk_namespace: Cow::Owned(pk_namespace),
         }
     }
-}
-
-pub fn deserialize_multi_kv_custom_pk<T: DeserializeOwned>(
-    store: &dyn Storage,
-    pk_namespace: &[u8],
-    kv: Pair,
-    pk_fn: fn(Vec<u8>) -> Vec<u8>,
-) -> StdResult<Pair<T>> {
-    let (key, pk_len) = kv;
-
-    // Deserialize pk_len
-    let pk_len = from_slice::<u32>(pk_len.as_slice())?;
-
-    // Recover pk from last part of k
-    let offset = key.len() - pk_len as usize;
-    let pk = pk_fn(key[offset..].to_vec());
-
-    let full_key = namespaces_with_key(&[pk_namespace], pk.as_slice());
-
-    let v = store
-        .get(&full_key)
-        .ok_or_else(|| StdError::generic_err("pk not found"))?;
-    let v = from_slice::<T>(&v)?;
-
-    Ok((pk, v))
 }
 
 impl<'a, K, T> Index<T> for CustomDeseMultiIndex<'a, K, T>
@@ -129,7 +104,9 @@ mod test {
     use cw_storage_plus::{Index, IndexList, IndexedMap, MultiIndex, PrimaryKey, U128Key, U64Key};
     use serde::{Deserialize, Serialize};
 
-    use super::{deserialize_multi_kv_custom_pk, CustomDeseMultiIndex};
+    use crate::cow::deserialize_multi_kv_custom_pk;
+
+    use super::CustomDeseMultiIndex;
 
     #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd)]
     struct Test {

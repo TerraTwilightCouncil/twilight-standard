@@ -10,7 +10,8 @@ mod map;
 mod tests;
 
 pub use conditional_multi_index::ConditionalMultiIndex;
-pub use custom_dese_index::{deserialize_multi_kv_custom_pk, CustomDeseMultiIndex};
+pub use custom_dese_index::CustomDeseMultiIndex;
+pub use helpers::{deserialize_multi_kv_custom_pk, DeserializeFn};
 pub use indexed_map::{IndexedMapCow, MultiIndexCow, UniqueIndexCow};
 pub use indexed_map_ref::IndexedMapRef;
 pub use item::ItemCow;
