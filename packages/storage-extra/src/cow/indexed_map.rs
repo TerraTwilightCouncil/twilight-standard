@@ -98,7 +98,7 @@ pub struct MultiIndexCow<'a, K, T> {
 }
 
 impl<'k, K, T> MultiIndexCow<'k, K, T> {
-    pub const fn new_ref(
+    pub fn new_ref(
         pk_namespace: &'k str,
         idx_namespace: &'k str,
         idx_fn: fn(&T, Vec<u8>) -> K,
@@ -110,7 +110,7 @@ impl<'k, K, T> MultiIndexCow<'k, K, T> {
         }
     }
 
-    pub const fn new_owned(
+    pub fn new_owned(
         pk_namespace: String,
         idx_namespace: String,
         idx_fn: fn(&T, Vec<u8>) -> K,
@@ -166,14 +166,14 @@ pub struct UniqueIndexCow<'a, K, T> {
 }
 
 impl<'k, K, T> UniqueIndexCow<'k, K, T> {
-    pub const fn new_ref(idx_namespace: &'k str, idx_fn: fn(&T) -> K) -> Self {
+    pub fn new_ref(idx_namespace: &'k str, idx_fn: fn(&T) -> K) -> Self {
         Self {
             idx_fn,
             idx_namespace: Cow::Borrowed(idx_namespace),
         }
     }
 
-    pub const fn new_owned(idx_namespace: String, idx_fn: fn(&T) -> K) -> Self {
+    pub fn new_owned(idx_namespace: String, idx_fn: fn(&T) -> K) -> Self {
         Self {
             idx_fn,
             idx_namespace: Cow::Owned(idx_namespace),
@@ -252,7 +252,7 @@ mod test {
     #[test]
     fn new_ref() {
         let mut storage = MockStorage::new();
-        const TO: IndexedMapCow<U64Key, ToIndex, ToIndexList> = IndexedMapCow::new_ref(
+        let to: IndexedMapCow<U64Key, ToIndex, ToIndexList> = IndexedMapCow::new_ref(
             "primary",
             ToIndexList {
                 count: MultiIndexCow::new_ref("primary", "primary_count", |e, k| {
@@ -268,10 +268,10 @@ mod test {
             address: Addr::unchecked("a"),
         };
 
-        TO.save(&mut storage, first.id.into(), &first).unwrap();
+        to.save(&mut storage, first.id.into(), &first).unwrap();
 
         assert_eq!(
-            TO.indexed_map().load(&storage, first.id.into()).unwrap(),
+            to.indexed_map().load(&storage, first.id.into()).unwrap(),
             first
         );
 
@@ -281,10 +281,10 @@ mod test {
             address: Addr::unchecked("b"),
         };
 
-        TO.save(&mut storage, second.id.into(), &second).unwrap();
+        to.save(&mut storage, second.id.into(), &second).unwrap();
 
         assert_eq!(
-            TO.index
+            to.index
                 .count
                 .prefix(5.into())
                 .range(&storage, None, None, Order::Ascending)
@@ -294,7 +294,7 @@ mod test {
         );
 
         assert_eq!(
-            TO.index
+            to.index
                 .address
                 .item(&storage, Addr::unchecked("a"))
                 .unwrap()
@@ -303,10 +303,10 @@ mod test {
             first
         );
 
-        TO.remove(&mut storage, first.id.into()).unwrap();
+        to.remove(&mut storage, first.id.into()).unwrap();
 
         assert_eq!(
-            TO.index
+            to.index
                 .count
                 .prefix(5.into())
                 .range(&storage, None, None, Order::Ascending)
@@ -316,7 +316,7 @@ mod test {
         );
 
         assert_eq!(
-            TO.index
+            to.index
                 .address
                 .item(&storage, Addr::unchecked("a"))
                 .unwrap(),

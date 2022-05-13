@@ -14,7 +14,7 @@ pub struct CustomDeseMultiIndex<'a, K, T> {
 }
 
 impl<'a, K, T> CustomDeseMultiIndex<'a, K, T> {
-    pub const fn new_ref(
+    pub fn new_ref(
         idx_fn: fn(&T, Vec<u8>) -> K,
         dese_fn: Option<DeserializeFn<T>>,
         pk_namespace: &'a str,
@@ -28,7 +28,7 @@ impl<'a, K, T> CustomDeseMultiIndex<'a, K, T> {
         }
     }
 
-    pub const fn new_owned(
+    pub fn new_owned(
         idx_fn: fn(&T, Vec<u8>) -> K,
         dese_fn: Option<DeserializeFn<T>>,
         pk_namespace: String,

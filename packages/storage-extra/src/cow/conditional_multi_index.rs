@@ -18,7 +18,7 @@ impl<'a, K, T> ConditionalMultiIndex<'a, K, T> {
     /// Only if result of `cond_fn` is `true`, data will be added to this `ConditionalMultiIndex`.
     ///
     /// Result of `cond_fn` **must be constant**, otherwise might raise unexpected behavior.
-    pub const fn new_ref(
+    pub fn new_ref(
         idx_fn: fn(&T, Vec<u8>) -> K,
         cond_fn: fn(&T) -> bool,
         dese_fn: Option<DeserializeFn<T>>,
@@ -37,7 +37,7 @@ impl<'a, K, T> ConditionalMultiIndex<'a, K, T> {
     /// Only if result of `cond_fn` is `true`, data will be added to this `ConditionalMultiIndex`.
     ///
     /// Result of `cond_fn` **must be constant**, otherwise might raise unexpected behavior.
-    pub const fn new_owned(
+    pub fn new_owned(
         idx_fn: fn(&T, Vec<u8>) -> K,
         cond_fn: fn(&T) -> bool,
         dese_fn: Option<DeserializeFn<T>>,
