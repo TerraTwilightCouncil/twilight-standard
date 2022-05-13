@@ -3,26 +3,24 @@ use cw_storage_plus::Item;
 use serde::{de::DeserializeOwned, Serialize};
 use std::{borrow::Cow, marker::PhantomData};
 
-use super::StorageCow;
-
 #[derive(Debug, Clone)]
 pub struct ItemCow<'a, T> {
     pub(crate) namespace: Cow<'a, str>,
     data_type: PhantomData<T>,
 }
 
-impl<'a, 'k, T> const StorageCow<'k> for ItemCow<'a, T>
+impl<'a, 'k, T> ItemCow<'a, T>
 where
     'k: 'a,
 {
-    fn new_owned(namespace: String) -> Self {
+    pub const fn new_owned(namespace: String) -> Self {
         Self {
             namespace: Cow::Owned(namespace),
             data_type: PhantomData,
         }
     }
 
-    fn new_ref(namespace: &'k str) -> Self {
+    pub const fn new_ref(namespace: &'k str) -> Self {
         Self {
             namespace: Cow::Borrowed(namespace),
             data_type: PhantomData,

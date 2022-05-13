@@ -3,8 +3,6 @@ use cw_storage_plus::{Map, Prefix, PrimaryKey};
 use serde::{de::DeserializeOwned, Serialize};
 use std::{borrow::Cow, marker::PhantomData};
 
-use super::StorageCow;
-
 #[derive(Debug, Clone)]
 pub struct MapCow<'a, K, T> {
     pub(crate) namespace: Cow<'a, str>,
@@ -12,11 +10,11 @@ pub struct MapCow<'a, K, T> {
     data_type: PhantomData<T>,
 }
 
-impl<'a, 'k, K, T> const StorageCow<'k> for MapCow<'a, K, T>
+impl<'a, 'k, K, T> MapCow<'a, K, T>
 where
     'k: 'a,
 {
-    fn new_owned(namespace: String) -> Self {
+    pub const fn new_owned(namespace: String) -> Self {
         Self {
             namespace: Cow::Owned(namespace),
             key_type: PhantomData,
@@ -24,7 +22,7 @@ where
         }
     }
 
-    fn new_ref(namespace: &'k str) -> Self {
+    pub const fn new_ref(namespace: &'k str) -> Self {
         Self {
             namespace: Cow::Borrowed(namespace),
             key_type: PhantomData,
