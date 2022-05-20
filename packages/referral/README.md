@@ -1,3 +1,7 @@
+# Referral
+
+A standard referral controller that can query referral of specfic address and referral chains.
+
 ## SingleSidedReferral
 
 Referral controller with standard specs,
