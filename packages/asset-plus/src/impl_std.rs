@@ -1,6 +1,5 @@
 use std::{
     fmt::Display,
-    iter::Sum,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Rem, RemAssign, Sub, SubAssign},
 };
 
@@ -22,23 +21,6 @@ impl Display for AssetInfo {
             }
             AssetInfo::NativeToken { denom } => write!(f, "Native token with denom {}", denom),
         }
-    }
-}
-
-impl Default for AssetInfo {
-    fn default() -> Self {
-        AssetInfo::NativeToken {
-            denom: String::from("uusd"),
-        }
-    }
-}
-
-impl Sum for Asset {
-    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
-        iter.fold(Asset::default(), |asset, next| Asset {
-            amount: next.amount + asset.amount,
-            ..next
-        })
     }
 }
 

@@ -2,7 +2,7 @@ use cosmwasm_std::{Addr, Uint128};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, PartialOrd, JsonSchema, Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, PartialOrd, JsonSchema)]
 pub struct Asset {
     /// Information about an asset stored in a [`AssetInfo`] struct
     pub info: AssetInfo,

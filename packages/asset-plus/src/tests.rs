@@ -31,7 +31,12 @@ mod tests {
 
     #[test]
     fn arithmethic() {
-        let mut a1 = Asset::default();
+        let mut a1 = Asset::new(
+            AssetInfo::NativeToken {
+                denom: "uusd".to_string(),
+            },
+            0u64,
+        );
 
         a1 += 100u64;
 
