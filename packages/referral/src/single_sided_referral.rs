@@ -22,12 +22,7 @@ impl<'a> SingleSidedReferral<'a> {
             ));
         }
 
-        self.0.update(storage, referred_addr, |r| -> StdResult<_> {
-            match r {
-                Some(_) => Err(StdError::generic_err("This address already has referral")),
-                None => Ok(referrer_addr.clone()),
-            }
-        })?;
+        self.0.save(storage, referred_addr, referrer_addr)?;
 
         Ok(())
     }
