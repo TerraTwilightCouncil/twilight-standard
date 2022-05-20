@@ -1,20 +1,21 @@
 [package]
 name = "tw-storage-macros"
-version = "0.1.1"
+description = "Procedural macros helper for interacting with `cw-storage-plus` and `cosmwasm-storage`"
+version = "0.1.2"
+license = "Apache-2.0"
 authors = ["TwilightCouncil"]
 edition = "2021"
+repository = "https://github.com/TwilightCouncil/twilight-standard"
 
 [lib]
 proc-macro = true 
 
 [features]
-# for more explicit tests, cargo test --features=backtraces
 backtraces = ["cosmwasm-std/backtraces"]
-# use library feature to disable all instantiate/execute/query exports
 library = []
 
 [dependencies]
-syn = "1.0.93"
+syn = { version = "1.0.93", features = ["full"] }
 
 [dev-dependencies]
 cosmwasm-std = { version = "0.16.7" }

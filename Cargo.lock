@@ -554,7 +554,7 @@ dependencies = [
 
 [[package]]
 name = "tw-asset-plus"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -567,7 +567,7 @@ dependencies = [
 
 [[package]]
 name = "tw-referral"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "cosmwasm-schema",
  "cosmwasm-std",
@@ -579,7 +579,7 @@ dependencies = [
 
 [[package]]
 name = "tw-storage-extra"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "cosmwasm-std",
  "cosmwasm-storage",
@@ -589,7 +589,7 @@ dependencies = [
 
 [[package]]
 name = "tw-storage-macros"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "cosmwasm-std",
  "cosmwasm-storage",

@@ -1,11 +1,11 @@
 [package]
 name = "tw-referral"
 description = "A standard referral controller that can query referral of specfic address and referral chains"
+version = "0.1.2"
 license = "Apache-2.0"
-version = "0.1.1"
 authors = ["TwilightCouncil"]
 edition = "2021"
-repository = "https://github.com/TerraTwilightCouncil/twilight-standard"
+repository = "https://github.com/TwilightCouncil/twilight-standard"
 
 [features]
 backtraces = ["cosmwasm-std/backtraces"]
