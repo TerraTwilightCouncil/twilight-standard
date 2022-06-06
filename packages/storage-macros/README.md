@@ -10,8 +10,6 @@ Auto generate `IndexList` impl for your indexes struct.
 
 `index_list_impl(T)` will generate `impl IndexList<T>` for struct `T` below the macro's call.
 
-`IndexList`, `Index` imports from `cw-storage-plus` are also required.
-
 ```rust
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 struct TestStruct {
@@ -37,12 +35,9 @@ Auto generate `PrimaryKey` and `Prefixer` impl for owned and reference variants,
 - `impl<'a> PrimaryKey<'a> for &'a T`
 - `impl Prefixer<'_> for T`
 - `impl<'a> Prefixer<'a> for &'a T`
-- `pub fn as_bytes(&self) -> &[u8]`
-- `pub fn from_slice(b: &[u8]) -> T`
+- `impl KeyDeserialize for T`
 
 for enum `T` below the macro's call.
-
-`PrimaryKey`, `Prefixer` imports from `cw-storage-plus` are also required.
 
 ```rust
 #[derive(Clone, Copy, StorageKey)] // <- Add the derive macro here.
@@ -50,4 +45,4 @@ enum TestEnum {
     G,
     F,
 }
-```r
+```

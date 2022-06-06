@@ -1,5 +1,5 @@
 use cosmwasm_std::testing::MockStorage;
-use cw_storage_plus::{Map, Prefixer, PrimaryKey};
+use cw_storage_plus::Map;
 use tw_storage_macros::StorageKey;
 
 #[derive(Clone, Copy, StorageKey)]
